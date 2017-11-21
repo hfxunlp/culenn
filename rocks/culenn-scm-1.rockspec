@@ -2,7 +2,7 @@ package = "culenn"
 version = "scm-1"
 
 source = {
-   url = "file:///media/Storage/workspace/culenn/culenn",
+   url = "git://github.com/anoidgit/culenn.git",
 }
 
 description = {
