@@ -26,8 +26,8 @@ for t=1, firstcycle do
 			psg=false
 			print("forward error")
 		end
-		stdgi=tmodstd:backward(stdi, stdgo)[1]
-		gi=tmod:backward({i, lvec}, go)
+		stdgi=tmodstd:backward(stdi, stdgo)
+		gi=tmod:backward({i, lvec}, go)[1]
 		if not (gi:narrow(2, 1, lens):equal(stdgi) and gi:narrow(2, lens+1, plens):equal(torch.zeros(bsize, plens):cuda()) ) then
 			psg=false
 			print("backward error")
