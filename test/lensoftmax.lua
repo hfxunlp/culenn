@@ -2,14 +2,14 @@ require "cunn"
 require "culenn"
 tmodstd=nn.SoftMax():cuda()
 tmod=lenn.LenSoftMax():cuda()
-minbsize=4
-maxbsize=4
-minlen=5
-maxlen=8
-minpadlen=3
-maxpadlen=3
+minbsize=8
+maxbsize=64
+minlen=16
+maxlen=128
+minpadlen=8
+maxpadlen=32
 psg=true
-firstcycle=5
+firstcycle=100
 for t=1, firstcycle do
 	if psg then
 		bsize=math.random(minbsize, maxbsize)
@@ -32,6 +32,7 @@ for t=1, firstcycle do
 			psg=false
 			print("backward error")
 		end
+		xlua.progress(t, firstcycle)
 	end
 end
 if psg then
