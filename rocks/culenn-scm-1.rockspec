@@ -16,6 +16,7 @@ description = {
 dependencies = {
    "torch >= 7.0",
    "nn >= 1.0",
+   "lenn",
    "cutorch >= 1.0"
 }
 
