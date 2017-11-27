@@ -51,6 +51,10 @@ __global__ void culenn_LenSoftMax_updateOutput_kernel(
     buffer[threadIdx.x] += ScalarConvert<T, AccumT>::to(z);
     output_k[i] = z;
   }
+  T zv = ScalarConvert<int, T>::to(0);
+  for (int i=i_start+i_end; i<dim; i+=i_step) {
+    output_k[i] = zv;
+  }
 
   __syncthreads();
 
@@ -105,6 +109,10 @@ __global__ void culenn_LenSoftMax_updateGradInput_kernel(
   T sum_k = ScalarConvert<AccumT, T>::to(buffer[0]);
   for (int i=i_start; i<i_end; i+=i_step)
     gradInput_k[i] = output_k[i] * (gradOutput_k[i] - sum_k);
+  T zv = ScalarConvert<int, T>::to(0);
+  for (int i=i_start+i_end; i<dim; i+=i_step) {
+    gradInput_k[i] = zv;
+  }
 }
 
 #include "generic/LenSoftMax.cu"
