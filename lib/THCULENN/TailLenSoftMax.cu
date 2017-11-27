@@ -12,7 +12,9 @@ __global__ void culenn_TailLenSoftMax_updateOutput_kernel(
   T *input_k  = input  + blockIdx.x*dim + blockIdx.y + blockIdx.z;
   T *output_k = output + blockIdx.x*dim + blockIdx.y + blockIdx.z;
 
-  int i_start = threadIdx.x + dim - ScalarConvert<IndexT, int>::to(len[blockIdx.x]);
+  int i_start_real = threadIdx.x;
+  int cur_len = dim - ScalarConvert<IndexT, int>::to(len[blockIdx.x]);
+  int i_start = i_start_real + cur_len;
   int i_end = dim;
   int i_step = blockDim.x;
 
@@ -51,6 +53,10 @@ __global__ void culenn_TailLenSoftMax_updateOutput_kernel(
     buffer[threadIdx.x] += ScalarConvert<T, AccumT>::to(z);
     output_k[i] = z;
   }
+  T zv = ScalarConvert<int, T>::to(0);
+  for (int i=i_start_real; i<cur_len; i+=i_step) {
+    output_k[i] = zv;
+  }
 
   __syncthreads();
 
@@ -80,7 +86,9 @@ __global__ void culenn_TailLenSoftMax_updateGradInput_kernel(
   T *output_k     = output     + blockIdx.x*dim + blockIdx.y + blockIdx.z;
   T *gradOutput_k = gradOutput + blockIdx.x*dim + blockIdx.y + blockIdx.z;
 
-  int i_start = threadIdx.x + dim - ScalarConvert<IndexT, int>::to(len[blockIdx.x]);
+  int i_start_real = threadIdx.x;
+  int cur_len = dim - ScalarConvert<IndexT, int>::to(len[blockIdx.x]);
+  int i_start = i_start_real + cur_len;
   int i_end = dim;
   int i_step = blockDim.x;
 
@@ -105,6 +113,10 @@ __global__ void culenn_TailLenSoftMax_updateGradInput_kernel(
   T sum_k = ScalarConvert<AccumT, T>::to(buffer[0]);
   for (int i=i_start; i<i_end; i+=i_step)
     gradInput_k[i] = output_k[i] * (gradOutput_k[i] - sum_k);
+  T zv = ScalarConvert<int, T>::to(0);
+  for (int i=i_start_real; i<cur_len; i+=i_step) {
+    gradInput_k[i] = zv;
+  }
 }
 
 #include "generic/TailLenSoftMax.cu"
